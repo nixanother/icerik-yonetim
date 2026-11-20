@@ -7,7 +7,7 @@ import { getSettings } from "@/lib/settings";
 import { setLang } from "@/lib/lang-actions";
 import { logout } from "./giris/actions";
 import Motion from "@/components/Motion";
-import { LogoLink, LogoMark, SakirFlight } from "@/components/Fun";
+import { LogoLink, LogoMark, SakirFlight, SakirPerch } from "@/components/Fun";
 
 const display = Bricolage_Grotesque({
   variable: "--font-display",
@@ -153,12 +153,19 @@ export default async function RootLayout({ children }) {
           <span aria-hidden="true" className="absolute top-10 left-[55%] h-10 w-10 rounded-full border-[6px] border-mint" />
           <div className="relative mx-auto max-w-6xl px-5 py-16">
             <p className="display max-w-3xl text-[clamp(2.2rem,6vw,4.5rem)]">{t.footerLine}</p>
-            <Link
-              href="/iletisim"
-              className="wiggle mt-8 inline-flex items-center rounded-full border-2 border-ink bg-amber px-7 py-3 font-bold text-ink shadow-[4px_4px_0_var(--ink)]"
-            >
-              {t.writeMe}
-            </Link>
+            <div className="mt-8 flex items-end gap-5">
+              <Link
+                href="/iletisim"
+                className="wiggle inline-flex items-center rounded-full border-2 border-ink bg-amber px-7 py-3 font-bold text-ink shadow-[4px_4px_0_var(--ink)]"
+              >
+                {t.writeMe}
+              </Link>
+              <SakirPerch
+                className="w-20 md:w-24"
+                say={lang === "en" ? "tweet tweet!" : "cik cik!"}
+                label={lang === "en" ? "Şakir, my budgie (click me)" : "Şakir, muhabbet kuşum (tıkla)"}
+              />
+            </div>
             <div className="mt-14 flex flex-wrap items-center justify-between gap-4 text-sm text-white/80">
               <span>
                 © 2026 {owner}

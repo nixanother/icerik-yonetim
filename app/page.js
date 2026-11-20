@@ -6,6 +6,7 @@ import { getLang, pick, dict, dateLocale } from "@/lib/i18n";
 import { Chars, Words } from "@/components/Split";
 import { plainText } from "@/components/Prose";
 import PinScenes from "@/components/PinScenes";
+import Budgie from "@/components/Budgie";
 import Shapes, { Squiggle, Marquee } from "@/components/Shapes";
 import { fun, tilt } from "@/lib/fun";
 
@@ -146,6 +147,8 @@ export default async function Home() {
               className="pointer-events-none absolute -top-4 -bottom-4 left-0 w-1 rounded-full bg-ink"
             >
               <span className="absolute -top-2 -left-[8px] h-5 w-5 rounded-full border-[3px] border-ink bg-pink" />
+              {/* Şakir playhead'in tepesine tünemiş, timeline boyunca onunla gider */}
+              <Budgie className="lost-bob absolute bottom-[calc(100%+4px)] -left-[26px] w-14 md:w-16" />
             </span>
           </div>
         </div>

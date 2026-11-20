@@ -6,6 +6,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import Budgie from "./Budgie";
 
@@ -44,6 +45,20 @@ export function SakirFlight({ say = "cik cik!" }) {
     window.addEventListener("sakir:fly", onFly);
     return () => window.removeEventListener("sakir:fly", onFly);
   }, []);
+
+  // Anasayfaya ilk gelişte Şakir kendiliğinden bir kez uçar (oturum başına bir kez)
+  const pathname = usePathname();
+  useEffect(() => {
+    if (pathname !== "/") return;
+    let seen = false;
+    try {
+      seen = sessionStorage.getItem("sakir-flew") === "1";
+      sessionStorage.setItem("sakir-flew", "1");
+    } catch {}
+    if (seen) return;
+    const t = setTimeout(() => window.dispatchEvent(new CustomEvent("sakir:fly")), 2200);
+    return () => clearTimeout(t);
+  }, [pathname]);
 
   useEffect(() => {
     if (!flying || !birdRef.current) return;
@@ -95,5 +110,39 @@ export function SakirFlight({ say = "cik cik!" }) {
         <Budgie className="w-full drop-shadow-[4px_6px_0_rgba(29,22,64,0.25)]" />
       </div>
     </div>
+  );
+}
+
+// Bir yere tünemiş Şakir: tıklayınca zıplar ve öter
+export function SakirPerch({ say = "cik cik!", label = "Şakir", className = "" }) {
+  const ref = useRef(null);
+  const bubbleRef = useRef(null);
+
+  const chirp = () => {
+    if (reduceMotion()) return;
+    gsap
+      .timeline()
+      .to(ref.current, { y: -22, rotate: -10, duration: 0.18, ease: "power2.out" })
+      .to(ref.current, { y: 0, rotate: 0, duration: 0.5, ease: "bounce.out" });
+    gsap.fromTo(
+      bubbleRef.current,
+      { scale: 0, autoAlpha: 0 },
+      { scale: 1, autoAlpha: 1, duration: 0.3, ease: "back.out(2.5)" }
+    );
+    gsap.to(bubbleRef.current, { scale: 0, autoAlpha: 0, duration: 0.2, delay: 1.4 });
+  };
+
+  return (
+    <button type="button" onClick={chirp} aria-label={label} className={`relative cursor-pointer ${className}`}>
+      <span
+        ref={bubbleRef}
+        className="pointer-events-none invisible absolute -top-8 left-1/2 -translate-x-1/2 rounded-full border-2 border-ink bg-paper-2 px-3 py-0.5 text-sm font-bold whitespace-nowrap text-ink opacity-0 shadow-[3px_3px_0_var(--ink)]"
+      >
+        {say}
+      </span>
+      <span ref={ref} className="block">
+        <Budgie className="w-full" title={label} />
+      </span>
+    </button>
   );
 }
