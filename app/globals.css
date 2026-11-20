@@ -253,3 +253,19 @@ html.lenis body {
 @media (prefers-reduced-motion: reduce) {
   .lost-bounce, .lost-bob, .lost-q { animation: none; opacity: 1; }
 }
+
+/* Anasayfa timeline açıklamaları: JS gelmeden önce sadece ilki görünsün */
+[data-cap]:not(:first-child) {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Yükleme ekranındaki zıplayan noktalar */
+@keyframes load-dot {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(-8px); opacity: 1; }
+}
+.load-dot { animation: load-dot 0.7s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .load-dot { animation: none; }
+}

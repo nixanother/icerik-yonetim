@@ -7,7 +7,7 @@ import { getSettings } from "@/lib/settings";
 import { setLang } from "@/lib/lang-actions";
 import { logout } from "./giris/actions";
 import Motion from "@/components/Motion";
-import { LogoLink, LogoMark, SakirFlight, PageCurtain } from "@/components/Fun";
+import { LogoLink, LogoMark, SakirFlight } from "@/components/Fun";
 
 const display = Bricolage_Grotesque({
   variable: "--font-display",
@@ -170,7 +170,6 @@ export default async function RootLayout({ children }) {
 
         <Motion />
         <SakirFlight say={lang === "en" ? "tweet tweet!" : "cik cik!"} />
-        <PageCurtain />
       </body>
     </html>
   );

@@ -3,11 +3,9 @@
 // Sitenin eğlenceli küçük sürprizleri:
 //  - LogoLink / LogoMark: logo; tıklanınca Şakir'i uçurur
 //  - SakirFlight: muhabbet kuşu Şakir ekranın bir ucundan öbürüne kanat çırparak uçar
-//  - PageCurtain: sayfa değişirken renkli şeritler perde gibi kapanıp açılır
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 import gsap from "gsap";
 import Budgie from "./Budgie";
 
@@ -96,81 +94,6 @@ export function SakirFlight({ say = "cik cik!" }) {
         </span>
         <Budgie className="w-full drop-shadow-[4px_6px_0_rgba(29,22,64,0.25)]" />
       </div>
-    </div>
-  );
-}
-
-const STRIPS = ["bg-pink", "bg-amber", "bg-mint", "bg-sky", "bg-cobalt"];
-const SKIP = /^\/(admin|giris)/;
-
-export function PageCurtain() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const rootRef = useRef(null);
-  const covered = useRef(false);
-  const safety = useRef(null);
-
-  const strips = () => rootRef.current?.querySelectorAll("[data-strip]") || [];
-
-  // Sayfa değişince perde açılır
-  useEffect(() => {
-    if (!covered.current) return;
-    clearTimeout(safety.current);
-    gsap.to(strips(), {
-      yPercent: -100,
-      duration: 0.55,
-      ease: "power3.inOut",
-      stagger: 0.06,
-      delay: 0.1,
-      onComplete: () => {
-        gsap.set(strips(), { y: 0, yPercent: 100 });
-        covered.current = false;
-      },
-    });
-  }, [pathname]);
-
-  // İç bağlantılara tıklanınca önce perde kapanır, sonra sayfaya geçilir
-  useEffect(() => {
-    gsap.set(strips(), { y: 0, yPercent: 100 });
-
-    const onClick = (e) => {
-      if (reduceMotion() || covered.current) return;
-      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      const a = e.target.closest?.("a[href]");
-      if (!a || a.hasAttribute("download") || (a.target && a.target !== "_self")) return;
-
-      const url = new URL(a.href, location.href);
-      if (url.origin !== location.origin) return;
-      if (url.pathname === location.pathname) return; // aynı sayfa (filtre, #bölüm)
-      if (SKIP.test(url.pathname) || SKIP.test(location.pathname)) return;
-
-      e.preventDefault();
-      e.stopPropagation();
-      covered.current = true;
-      gsap.to(strips(), {
-        yPercent: 0,
-        duration: 0.45,
-        ease: "power3.inOut",
-        stagger: 0.05,
-        onComplete: () => router.push(url.pathname + url.search + url.hash),
-      });
-      // Bir sorun olursa perde ekranda takılı kalmasın
-      safety.current = setTimeout(() => {
-        gsap.to(strips(), { yPercent: 100, duration: 0.3 });
-        covered.current = false;
-      }, 6000);
-    };
-
-    // Yakalama aşaması: Next.js'in Link'inden önce çalışır
-    window.addEventListener("click", onClick, true);
-    return () => window.removeEventListener("click", onClick, true);
-  }, [router]);
-
-  return (
-    <div ref={rootRef} aria-hidden="true" className="pointer-events-none fixed inset-0 z-[90] flex">
-      {STRIPS.map((c) => (
-        <span key={c} data-strip className={`h-full flex-1 ${c}`} style={{ transform: "translateY(100%)" }} />
-      ))}
     </div>
   );
 }
