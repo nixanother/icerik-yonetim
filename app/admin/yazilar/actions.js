@@ -69,3 +69,12 @@ export async function togglePublish(formData) {
   await db.update("posts", `id=eq.${id}`, { published: !published });
   refresh();
 }
+
+// Öne çıkan yazılar sitede en üstte ve rozetle gösterilir
+export async function toggleFeatured(formData) {
+  await requireAdmin();
+  const id = Number(formData.get("id"));
+  const featured = formData.get("featured") === "true";
+  await db.update("posts", `id=eq.${id}`, { featured: !featured });
+  refresh();
+}

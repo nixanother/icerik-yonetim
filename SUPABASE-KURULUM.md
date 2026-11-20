@@ -73,3 +73,16 @@ Sonra terminalde `npm run dev` çalıştır, http://localhost:3000 adresini aç.
 1. Kodları GitHub'a gönder (git add . → git commit → git push).
 2. Vercel'de projeni aç → **Settings → Environment Variables**. Yukarıdaki 5 değişkeni aynı adlarla ekle.
 3. **Deployments** sekmesinden son dağıtımı **Redeploy** et.
+
+## 4. Blog yazıları (vize için 3 yazı)
+SQL Editor'de proje klasöründeki `BLOG-YAZILARI-SQL.sql` dosyasının içeriğini çalıştır. Premiere Multicam, hareketli maske ile yüz blur ve PT-App yazıları Türkçe + İngilizce, kategori ve etiketleriyle eklenir. Sonra yönetim panelinden istediğin gibi düzenleyebilirsin.
+
+## 5. Animasyon paketleri
+Site GSAP (ScrollTrigger) ve Lenis kullanır. Proje klasöründe bir kez şunu çalıştır:
+
+```
+npm install gsap lenis
+```
+
+## 6. Panel yenilikleri
+Mesajlarda okundu/okunmadı ve makalelerde "öne çıkar" için `GUNCELLEME-2-SQL.sql` dosyasını SQL Editor'de bir kez çalıştır.

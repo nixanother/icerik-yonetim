@@ -1,33 +1,46 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Source_Serif_4 } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import { isAdmin } from "@/lib/auth";
-import { getLang, dict } from "@/lib/i18n";
+import { getLang, pick, dict } from "@/lib/i18n";
+import { getSettings } from "@/lib/settings";
 import { setLang } from "@/lib/lang-actions";
 import { logout } from "./giris/actions";
+import Motion from "@/components/Motion";
+import { LogoLink, LogoMark, SakirFlight, PageCurtain } from "@/components/Fun";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const display = Bricolage_Grotesque({
+  variable: "--font-display",
+  subsets: ["latin", "latin-ext"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const serif = Source_Serif_4({
+  variable: "--font-serif",
+  subsets: ["latin", "latin-ext"],
 });
 
 export const metadata = {
-  title: "İçerik Yönetim Sistemi",
-  description: "Kendi yazdığım içerik yönetim paneli, makaleler, galeri, projeler ve kişisel ajanda.",
+  title: { default: "Zeynep Hüma Esen", template: "%s | Zeynep Hüma Esen" },
+  description: "Kişisel web sitem: projelerim, yazılarım ve galerim. Kendi yazdığım içerik yönetim paneliyle yönetiliyor.",
 };
 
+// Animasyonlu öğeler ilk boyamada gizli başlasın; JS hiç çalışmazsa 4 sn sonra görünür olur
+const bootScript = `(function(){try{if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&!/^\\/(admin|giris)/.test(location.pathname)){var d=document.documentElement;d.classList.add('anim');setTimeout(function(){d.classList.remove('anim')},4000)}}catch(e){}})();`;
+
+async function safeSettings() {
+  try {
+    return await getSettings();
+  } catch {
+    return {};
+  }
+}
+
 export default async function RootLayout({ children }) {
-  const admin = await isAdmin();
-  const lang = await getLang();
+  const [admin, lang, settings] = await Promise.all([isAdmin(), getLang(), safeSettings()]);
   const t = dict[lang];
+  const owner = pick(settings, "about_title", lang) || t.siteName;
 
   const links = [
-    { href: "/", label: t.home },
     { href: "/hakkinda", label: t.about },
     { href: "/projeler", label: t.projects },
     { href: "/galeri", label: t.gallery },
@@ -35,66 +48,129 @@ export default async function RootLayout({ children }) {
     { href: "/iletisim", label: t.contact },
   ];
 
+  const langSwitch = (
+    <form action={setLang} className="flex rounded-full border border-line p-0.5 text-xs font-semibold">
+      {["tr", "en"].map((code) => (
+        <button
+          key={code}
+          type="submit"
+          name="lang"
+          value={code}
+          aria-pressed={lang === code}
+          className={`rounded-full px-2.5 py-1 transition-colors ${
+            lang === code ? "bg-ink text-paper" : "text-slate hover:text-ink"
+          }`}
+        >
+          {code.toUpperCase()}
+        </button>
+      ))}
+    </form>
+  );
+
+  const adminLinks = admin ? (
+    <>
+      <Link href="/admin" className="link-line">
+        {t.panel}
+      </Link>
+      <form action={logout}>
+        <button type="submit" className="link-line text-slate hover:text-ink">
+          {t.logout}
+        </button>
+      </form>
+    </>
+  ) : (
+    <Link href="/giris" className="text-slate hover:text-ink">
+      {t.login}
+    </Link>
+  );
+
   return (
     <html
       lang={lang}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
+      className={`${display.variable} ${serif.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <header className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow">
-          <nav className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-4 py-3">
-            <Link href="/" className="text-lg font-bold">
-              📝 {t.siteName}
-            </Link>
-            <div className="flex flex-wrap items-center gap-4 text-sm">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: bootScript }} />
+      </head>
+      <body className="flex min-h-full flex-col">
+        <a
+          href="#icerik"
+          className="sr-only z-50 rounded-full bg-cobalt px-4 py-2 text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        >
+          {t.skip}
+        </a>
+
+        <header className="sticky top-0 z-40 border-b border-line/70 bg-paper/85 backdrop-blur-md">
+          <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3.5">
+            <LogoLink className="flex items-center gap-2.5 text-[1.05rem] font-bold tracking-tight">
+              <LogoMark />
+              {owner}
+            </LogoLink>
+
+            <div className="hidden items-center gap-6 text-[0.95rem] md:flex">
               {links.map((l) => (
-                <Link key={l.href} href={l.href} className="hover:underline">
+                <Link key={l.href} href={l.href} className="link-line">
                   {l.label}
                 </Link>
               ))}
-
-              <form action={setLang} className="flex overflow-hidden rounded-lg bg-white/20 text-xs font-semibold">
-                <button
-                  type="submit"
-                  name="lang"
-                  value="tr"
-                  className={`px-2 py-1 ${lang === "tr" ? "bg-white text-indigo-700" : "hover:bg-white/30"}`}
-                >
-                  TR
-                </button>
-                <button
-                  type="submit"
-                  name="lang"
-                  value="en"
-                  className={`px-2 py-1 ${lang === "en" ? "bg-white text-indigo-700" : "hover:bg-white/30"}`}
-                >
-                  EN
-                </button>
-              </form>
-
-              {admin ? (
-                <>
-                  <Link href="/admin" className="hover:underline">
-                    {t.panel}
-                  </Link>
-                  <form action={logout}>
-                    <button type="submit" className="rounded-lg bg-white/20 px-3 py-1 hover:bg-white/30">
-                      {t.logout}
-                    </button>
-                  </form>
-                </>
-              ) : (
-                <Link href="/giris" className="rounded-lg bg-white/20 px-3 py-1 hover:bg-white/30">
-                  {t.login}
-                </Link>
-              )}
+              {langSwitch}
+              <span className="flex items-center gap-4 text-sm">{adminLinks}</span>
             </div>
+
+            <details className="group relative md:hidden">
+              <summary className="cursor-pointer list-none rounded-full border border-line px-4 py-1.5 text-sm font-semibold [&::-webkit-details-marker]:hidden">
+                <span className="group-open:hidden">{t.menu}</span>
+                <span className="hidden group-open:inline">{t.close}</span>
+              </summary>
+              <div className="absolute right-0 mt-3 w-64 rounded-2xl border border-line bg-paper-2 p-5">
+                <ul className="space-y-3 text-lg font-semibold">
+                  <li>
+                    <Link href="/">{t.home}</Link>
+                  </li>
+                  {links.map((l) => (
+                    <li key={l.href}>
+                      <Link href={l.href}>{l.label}</Link>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-5 flex items-center justify-between gap-3 border-t border-line pt-4 text-sm">
+                  {langSwitch}
+                  <span className="flex flex-col items-end gap-1">{adminLinks}</span>
+                </div>
+              </div>
+            </details>
           </nav>
         </header>
 
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">{children}</main>
+        <main id="icerik" className="w-full flex-1">
+          {children}
+        </main>
 
-        <footer className="py-6 text-center text-sm text-gray-500">© 2026 {t.siteName}</footer>
+        <footer className="relative mt-24 overflow-hidden rounded-t-[2.5rem] bg-cobalt text-white">
+          <span aria-hidden="true" className="absolute -top-16 -right-10 h-56 w-56 rounded-full bg-pink" />
+          <span aria-hidden="true" className="absolute -bottom-20 left-[30%] h-44 w-44 rounded-full bg-amber/90" />
+          <span aria-hidden="true" className="absolute top-10 left-[55%] h-10 w-10 rounded-full border-[6px] border-mint" />
+          <div className="relative mx-auto max-w-6xl px-5 py-16">
+            <p className="display max-w-3xl text-[clamp(2.2rem,6vw,4.5rem)]">{t.footerLine}</p>
+            <Link
+              href="/iletisim"
+              className="wiggle mt-8 inline-flex items-center rounded-full border-2 border-ink bg-amber px-7 py-3 font-bold text-ink shadow-[4px_4px_0_var(--ink)]"
+            >
+              {t.writeMe}
+            </Link>
+            <div className="mt-14 flex flex-wrap items-center justify-between gap-4 text-sm text-white/80">
+              <span>
+                © 2026 {owner}
+              </span>
+              <span>{t.builtWith}</span>
+            </div>
+          </div>
+        </footer>
+
+        <Motion />
+        <SakirFlight say={lang === "en" ? "tweet tweet!" : "cik cik!"} />
+        <PageCurtain />
       </body>
     </html>
   );

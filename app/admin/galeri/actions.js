@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
@@ -45,4 +46,37 @@ export async function deleteImage(formData) {
   await db.remove("gallery", `id=eq.${id}`);
 
   revalidatePath("/", "layout");
+}
+
+// Açıklamaları günceller; yeni resim seçilirse eskisinin yerine koyar
+export async function updateImage(prevState, formData) {
+  await requireAdmin();
+
+  const id = Number(formData.get("id"));
+  const oldPath = String(formData.get("old_path") || "");
+  const row = {
+    title: String(formData.get("title") || "").trim(),
+    title_en: String(formData.get("title_en") || "").trim(),
+  };
+
+  const file = formData.get("image");
+  if (file && typeof file !== "string" && file.size > 0) {
+    if (!file.type.startsWith("image/")) return { error: "Sadece resim dosyaları yüklenebilir." };
+    if (file.size > MAX_SIZE) return { error: "Resim 4 MB'tan büyük olamaz." };
+    try {
+      row.image_path = await uploadToStorage(file);
+    } catch (err) {
+      return { error: `Yükleme başarısız: ${err.message}` };
+    }
+  }
+
+  try {
+    await db.update("gallery", `id=eq.${id}`, row);
+  } catch {
+    return { error: "Kaydedilemedi." };
+  }
+  if (row.image_path && oldPath) await removeFromStorage(oldPath);
+
+  revalidatePath("/", "layout");
+  redirect("/admin/galeri");
 }

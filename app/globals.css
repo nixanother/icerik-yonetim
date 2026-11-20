@@ -1,19 +1,255 @@
 @import "tailwindcss";
 
+/*
+  Tasarım dili: "renkli kurgu masası"
+  Açık lila zemin, koyu mor mürekkep; her bölümün ve klibin kendi neşeli rengi var.
+*/
 :root {
-  --background: #f4f6fb;
-  --foreground: #1f2937;
+  --paper: #f7f4ff;
+  --paper-2: #ffffff;
+  --ink: #1d1640;
+  --slate: #5d5680;
+  --line: #ddd6f3;
+  --cobalt: #5b3df5; /* ana renk: menekşe */
+  --cobalt-deep: #4426d6;
+  --amber: #ffcf33; /* güneş sarısı */
+  --pink: #ff4fa3;
+  --mint: #1fc8a0;
+  --orange: #ff7a2f;
+  --sky: #33b5ff;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
 }
 
 @theme inline {
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-slate: var(--slate);
+  --color-line: var(--line);
+  --color-cobalt: var(--cobalt);
+  --color-cobalt-deep: var(--cobalt-deep);
+  --color-amber: var(--amber);
+  --color-pink: var(--pink);
+  --color-mint: var(--mint);
+  --color-orange: var(--orange);
+  --color-sky: var(--sky);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-display);
+  --font-display: var(--font-display);
+  --font-serif: var(--font-serif);
+}
+
+html {
+  background: var(--paper);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  background-color: var(--paper);
+  background-image: radial-gradient(color-mix(in srgb, var(--cobalt) 13%, transparent) 1.2px, transparent 1.3px);
+  background-size: 26px 26px;
+  color: var(--ink);
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-feature-settings: "tnum" 0;
+}
+
+::selection {
+  background: var(--cobalt);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Büyük başlıklar: sıkı satır aralığı, hafif negatif harf aralığı */
+.display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+}
+
+/* Uzun okuma metni */
+.prose-body {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 1.1875rem;
+  line-height: 1.7;
+  max-width: 68ch;
+}
+.prose-body h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.6rem;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 2.6rem 0 0.9rem;
+}
+.prose-body p {
+  margin: 0 0 1.15rem;
+}
+.prose-body ul,
+.prose-body ol {
+  margin: 0 0 1.4rem;
+  padding-left: 1.4rem;
+}
+.prose-body ul {
+  list-style: disc;
+}
+.prose-body ol {
+  list-style: decimal;
+}
+.prose-body li {
+  margin: 0.35rem 0;
+  padding-left: 0.3rem;
+}
+.prose-body li::marker {
+  color: var(--cobalt);
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+/* Timecode ve sayılar */
+.tc {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Hero harfleri maskeden yükselir */
+.mask-word {
+  display: inline-block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+  vertical-align: top;
+}
+.mask-word .c {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* Kurgu timeline'ı */
+.track {
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent 0,
+    transparent calc(10% - 1px),
+    color-mix(in srgb, var(--ink) 14%, transparent) calc(10% - 1px),
+    color-mix(in srgb, var(--ink) 14%, transparent) 10%
+  );
+}
+/* Her klibin kendi rengi var (--clip); aktif klip renkle dolar ve hafifçe zıplar */
+.clip {
+  background: color-mix(in srgb, var(--clip) 16%, white);
+  border-color: color-mix(in srgb, var(--clip) 45%, white);
+  transition: background-color 0.3s, color 0.3s, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.clip[data-active="true"] {
+  background: var(--clip);
+  border-color: var(--clip);
+  color: #fff;
+  transform: translateY(-4px) rotate(-1.5deg);
+}
+
+/* Akan yazı bandı */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee {
+  animation: marquee 28s linear infinite;
+}
+.marquee-wrap:hover .marquee {
+  animation-play-state: paused;
+}
+
+/* Üzerine gelince hafifçe sallanan düğmeler */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-3deg) scale(1.04); }
+  75% { transform: rotate(3deg) scale(1.04); }
+}
+.wiggle:hover {
+  animation: wiggle 0.45s ease-in-out;
+}
+
+/* Polaroid gibi eğik kartlar; üzerine gelince düzelir */
+.tilt {
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.tilt:hover {
+  transform: rotate(0deg) translateY(-6px) !important;
+}
+
+/* Altı çizili bağlantı: çizgi soldan dolar */
+.link-line {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.35s ease;
+}
+.link-line:hover,
+.link-line:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* Animasyon başlamadan önce gizlenecek öğeler (JS çalışmazsa 4 sn sonra görünür) */
+html.anim [data-reveal],
+html.anim [data-chars] .c {
+  opacity: 0;
+}
+
+/* Lenis yumuşak kaydırma */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* 404 sayfası: zıplayan rakamlar, sallanan Şakir, beliren soru işaretleri */
+@keyframes lost-bounce {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-0.12em) rotate(4deg); }
+}
+@keyframes lost-bob {
+  0%, 100% { transform: translateY(0) rotate(-6deg); }
+  50% { transform: translateY(-0.06em) rotate(6deg); }
+}
+@keyframes lost-q {
+  0%, 100% { opacity: 0; transform: translateY(0.2em) scale(0.6); }
+  40%, 70% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.lost-bounce { animation: lost-bounce 1.6s ease-in-out infinite; }
+.lost-delay { animation-delay: 0.4s; }
+.lost-bob { animation: lost-bob 2.2s ease-in-out infinite; }
+.lost-q { animation: lost-q 2.4s ease-in-out infinite; }
+.lost-q2 { animation-delay: 0.8s; }
+@media (prefers-reduced-motion: reduce) {
+  .lost-bounce, .lost-bob, .lost-q { animation: none; opacity: 1; }
 }

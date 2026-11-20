@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { db } from "@/lib/db";
 import { publicUrl } from "@/lib/storage";
 import { deleteImage } from "./actions";
@@ -29,6 +30,12 @@ export default async function AdminGalleryPage() {
             />
             <div className="flex items-center justify-between gap-2 p-3">
               <span className="truncate text-sm text-gray-600">{img.title || "Başlıksız"}</span>
+              <Link
+                href={`/admin/galeri/${img.id}`}
+                className="rounded-lg bg-amber-400 px-3 py-1 text-sm hover:bg-amber-500"
+              >
+                Düzenle
+              </Link>
               <form action={deleteImage}>
                 <input type="hidden" name="id" value={img.id} />
                 <input type="hidden" name="path" value={img.image_path} />

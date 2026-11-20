@@ -39,9 +39,37 @@ export default function AboutForm({ s }) {
         <p className="mt-1 text-xs text-gray-400">Boş bırakırsan mevcut fotoğraf korunur (en fazla 4 MB).</p>
       </div>
 
+      <div>
+        <label className="mb-1 block text-sm font-medium">Anasayfa fotoğrafı</label>
+        <input name="hero_photo" type="file" accept="image/*" className="rounded-lg border border-gray-300 px-3 py-2" />
+        <p className="mt-1 text-xs text-gray-400">
+          Anasayfanın en üstünde görünür. Boş bırakılırsa orada da vesikalık kullanılır (en fazla 4 MB).
+        </p>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm font-medium">Özgeçmiş (CV) PDF</label>
+        <input name="cv" type="file" accept="application/pdf" className="rounded-lg border border-gray-300 px-3 py-2" />
+        <p className="mt-1 text-xs text-gray-400">
+          Hakkımda sayfasında &quot;CV&apos;mi indir&quot; düğmesi çıkar. Boş bırakırsan mevcut CV korunur (en fazla 4 MB).
+          {s.cv_path ? " Şu an yüklü bir CV var." : " Henüz CV yüklenmedi."}
+        </p>
+        {s.cv_path && (
+          <label className="mt-2 flex items-center gap-2 text-sm">
+            <input type="checkbox" name="remove_cv" /> CV&apos;yi kaldır
+          </label>
+        )}
+      </div>
+
+      <p className="text-xs text-gray-400">
+        Not: Tek seferde yüklenen dosyaların toplamı 4 MB&apos;ı geçmesin; gerekirse fotoğrafları ve CV&apos;yi ayrı ayrı kaydet.
+      </p>
+
       <div className="grid gap-4 md:grid-cols-2">
         <Field label="Başlık / Ad Soyad (Türkçe)" name="about_title" value={s.about_title} />
         <Field label="Title / Name (English)" name="about_title_en" value={s.about_title_en} />
+        <Field label="Anasayfa kısa tanıtım (Türkçe)" name="tagline" value={s.tagline} hint="isminin altında görünen tek cümle" />
+        <Field label="Homepage tagline (English)" name="tagline_en" value={s.tagline_en} hint="one sentence under your name" />
         <Field label="Hakkımda / Özgeçmiş (Türkçe)" name="about_text" value={s.about_text} rows={8} />
         <Field label="About me / Resume (English)" name="about_text_en" value={s.about_text_en} rows={8} />
         <Field label="Eğitim (Türkçe)" name="education" value={s.education} rows={4} hint="her satıra bir madde" />

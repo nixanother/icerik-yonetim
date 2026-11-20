@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { deletePost, togglePublish } from "./actions";
+import { deletePost, togglePublish, toggleFeatured } from "./actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function PostsPage() {
   const posts = await db.select("posts", "select=*&order=created_at.desc");
+  // featured sütunu yoksa (GUNCELLEME-2-SQL.sql çalıştırılmadıysa) yıldız düğmesi gizlenir
+  const hasFeatured = posts.length === 0 || "featured" in posts[0];
 
   return (
     <div>
@@ -24,13 +26,31 @@ export default async function PostsPage() {
         {posts.map((post) => (
           <div key={post.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-4 shadow">
             <div className="min-w-0">
-              <p className="truncate font-semibold">{post.title}</p>
+              <p className="truncate font-semibold">
+                {post.featured && <span className="mr-2 text-amber-500">★</span>}
+                {post.title}
+              </p>
               <p className="text-sm text-gray-400">
                 /yazi/{post.slug} · {new Date(post.created_at).toLocaleDateString("tr-TR")}
               </p>
             </div>
 
             <div className="flex items-center gap-2">
+              {hasFeatured && (
+                <form action={toggleFeatured}>
+                  <input type="hidden" name="id" value={post.id} />
+                  <input type="hidden" name="featured" value={String(Boolean(post.featured))} />
+                  <button
+                    type="submit"
+                    title={post.featured ? "Öne çıkarmayı kaldır" : "Öne çıkar"}
+                    className={`rounded-lg px-3 py-1 text-sm ${
+                      post.featured ? "bg-amber-400 text-indigo-950 hover:bg-amber-500" : "bg-gray-100 hover:bg-gray-200"
+                    }`}
+                  >
+                    {post.featured ? "★ Öne çıkan" : "☆ Öne çıkar"}
+                  </button>
+                </form>
+              )}
               <form action={togglePublish}>
                 <input type="hidden" name="id" value={post.id} />
                 <input type="hidden" name="published" value={String(post.published)} />
