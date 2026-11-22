@@ -269,3 +269,100 @@ html.lenis body {
 @media (prefers-reduced-motion: reduce) {
   .load-dot { animation: none; }
 }
+
+/* ================================================================
+   Yönetim paneli teması
+   Panel sayfaları Tailwind'in standart sınıflarını kullanıyor; burada hepsini
+   tek yerden sitenin neşeli, kalın çerçeveli tarzına çeviriyoruz.
+   ================================================================ */
+.admin-ui h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+}
+.admin-ui h2 {
+  color: var(--ink);
+}
+
+/* Beyaz kartlar */
+.admin-ui .shadow,
+.admin-ui .shadow-lg {
+  border: 2px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  border-radius: 1.25rem;
+}
+.admin-ui a.shadow:hover,
+.admin-ui a.shadow-lg:hover {
+  box-shadow: 7px 7px 0 var(--ink);
+  transform: translate(-2px, -2px);
+}
+
+/* Düğmeler */
+.admin-ui :is(button, a):is(.bg-indigo-600, .bg-red-500, .bg-amber-400, .bg-amber-500, .bg-emerald-500,
+  .bg-green-600, .bg-gray-500, .bg-gray-100, .bg-pink-500) {
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  font-weight: 700;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.admin-ui :is(button, a):is(.bg-indigo-600, .bg-red-500, .bg-amber-400, .bg-amber-500, .bg-emerald-500,
+  .bg-green-600, .bg-gray-500, .bg-gray-100, .bg-pink-500):hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.admin-ui :is(button, a):is(.bg-indigo-600, .bg-red-500, .bg-amber-400, .bg-amber-500, .bg-emerald-500,
+  .bg-green-600, .bg-gray-500, .bg-gray-100, .bg-pink-500):active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+.admin-ui :is(button, a).bg-indigo-600 { background: var(--cobalt); }
+.admin-ui :is(button, a).bg-red-500 { background: #ff5d73; }
+.admin-ui :is(button, a):is(.bg-amber-400, .bg-amber-500) { background: var(--amber); color: var(--ink); }
+.admin-ui :is(button, a).bg-emerald-500,
+.admin-ui :is(button, a).bg-green-600 { background: var(--mint); }
+.admin-ui :is(button, a).bg-pink-500 { background: var(--pink); }
+.admin-ui :is(button, a).bg-gray-100 { background: var(--paper-2); }
+/* Gölgesiz beyaz ikincil düğmeler (ör. "Ajandaya Git") */
+.admin-ui a.bg-white.shadow { border-radius: 999px; font-weight: 700; }
+
+/* Form alanları */
+.admin-ui :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), textarea, select) {
+  border: 2px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  border-radius: 0.8rem;
+  background: var(--paper);
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.admin-ui :is(input:not([type="checkbox"]):not([type="radio"]), textarea, select):focus {
+  outline: none;
+  border-color: var(--cobalt);
+  background: #fff;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cobalt) 18%, transparent);
+}
+.admin-ui input[type="file"]::file-selector-button {
+  margin-right: 0.75rem;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--amber);
+  padding: 0.3rem 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.admin-ui :is(input[type="checkbox"], input[type="radio"]) {
+  accent-color: var(--cobalt);
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+/* Bilgi kutuları (kaydedildi, hata, uyarı) */
+.admin-ui :is(.bg-green-50, .bg-red-50, .bg-amber-50) {
+  border: 2px solid currentColor;
+  border-radius: 0.9rem;
+  font-weight: 600;
+}
+
+/* Renk düzeltmeleri */
+.admin-ui :is(.text-indigo-900, .text-indigo-950) { color: var(--ink); }
+.admin-ui :is(.text-indigo-600, .text-indigo-700) { color: var(--cobalt); }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { getSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,13 @@ export default async function AdminHome() {
     safe(db.select("agenda", "select=id,done")),
   ]);
 
+  const settings = await getSettings().catch(() => ({}));
+  const firstName = String(settings.about_title || "").trim().split(/\s+/)[0] || "";
+  const hour = Number(
+    new Date().toLocaleString("en-GB", { hour: "2-digit", hour12: false, timeZone: "Europe/Istanbul" })
+  );
+  const greeting = hour < 12 ? "Günaydın" : hour < 18 ? "İyi günler" : "İyi akşamlar";
+
   const unread = messages.filter((m) => m.is_read === false);
   const published = posts.filter((p) => p.published).length;
 
@@ -28,7 +36,17 @@ export default async function AdminHome() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-indigo-900">Genel Bakış</h1>
+      <div className="mb-6">
+        <h1>
+          {greeting}
+          {firstName ? `, ${firstName}` : ""} 👋
+        </h1>
+        <p className="mt-1 text-slate">
+          {unread.length > 0
+            ? `${unread.length} okunmamış mesajın var. Şakir merak ediyor!`
+            : "Her şey yolunda görünüyor. Bugün ne ekleyelim?"}
+        </p>
+      </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
         {stats.map((s) => (
