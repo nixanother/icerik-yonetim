@@ -101,11 +101,10 @@ export default async function Home() {
         </div>
 
         <div data-reveal>
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+          <div className="mb-4">
             <span data-tc className="tc text-3xl font-bold tracking-tight md:text-4xl">
               00:00:00:00
             </span>
-            <span className="text-sm text-slate">{t.scrollHint}</span>
           </div>
 
           <div className="relative mb-5 hidden h-24 md:block">
