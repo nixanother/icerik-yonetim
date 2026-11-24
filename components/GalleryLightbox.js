@@ -4,6 +4,7 @@
 // Fotoğrafa tıklayınca açılır; oklar, klavye (← → Esc) ve parmakla kaydırma ile gezilir.
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import gsap from "gsap";
 
 const TILTS = ["-rotate-2", "rotate-1", "-rotate-1", "rotate-2", "rotate-[0.5deg]", "-rotate-[0.5deg]"];
@@ -129,7 +130,8 @@ export default function GalleryLightbox({ images, labels }) {
         ))}
       </div>
 
-      {open && (
+      {/* Görüntüleyici sayfanın en üstüne (body'ye) taşınır; böylece menünün arkasında kalmaz */}
+      {open && createPortal(
         <div
           ref={overlayRef}
           role="dialog"
@@ -193,7 +195,8 @@ export default function GalleryLightbox({ images, labels }) {
               </button>
             </>
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

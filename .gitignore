@@ -42,3 +42,6 @@ next-env.d.ts
 
 # siteye yüklenecek fotoğraflar (panelden yüklenir, depoya girmez)
 /galeri-hazir/
+
+# vize teslim dosyası
+/20251129060*.pdf

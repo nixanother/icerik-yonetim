@@ -46,6 +46,12 @@ html {
   background: var(--paper);
 }
 
+/* Süsler ve kayan bantlar sayfayı yana taşırmasın (sticky menüyü bozmayan "clip") */
+html,
+body {
+  overflow-x: clip;
+}
+
 body {
   background-color: var(--paper);
   background-image: radial-gradient(color-mix(in srgb, var(--cobalt) 13%, transparent) 1.2px, transparent 1.3px);
