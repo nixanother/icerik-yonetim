@@ -33,13 +33,13 @@ export default async function ProjectsPage() {
               <div
                 className={`tilt ${tilt(i)} rounded-[1.75rem] border-2 border-ink p-2.5 shadow-[7px_7px_0_var(--ink)] ${fun(i).bg}`}
               >
-              <div data-clip className="aspect-[16/10] overflow-hidden rounded-[1.25rem] bg-paper-2">
+              <div data-clip className={`aspect-[16/10] overflow-hidden rounded-[1.25rem] ${fun(i).soft}`}>
                 {p.image_path && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={publicUrl(p.image_path)}
                     alt={pick(p, "title", lang)}
-                    className="h-full w-full object-cover object-top"
+                    className="h-full w-full object-contain p-3"
                   />
                 )}
               </div>

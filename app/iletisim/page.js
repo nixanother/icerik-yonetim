@@ -73,19 +73,18 @@ export default async function ContactPage() {
         </div>
       </div>
 
-      <section data-reveal className="mt-20">
+      {mapQuery && (
+      <section className="mt-20">
         <div className="relative h-[24rem] overflow-hidden rounded-[1.75rem] border-2 border-ink bg-paper-2 shadow-[7px_7px_0_var(--ink)] md:h-[30rem]">
           {mapQuery ? (
             <iframe
               title="Google Map"
-              src={`https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`}
-              className="h-full w-full grayscale-[35%]"
-              loading="lazy"
+              src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&hl=${lang}&z=15&output=embed`}
+              className="absolute inset-0 h-full w-full border-0"
+              allowFullScreen
               referrerPolicy="no-referrer-when-downgrade"
             />
-          ) : (
-            <div className="flex h-full items-center justify-center p-6 text-slate">Google Map</div>
-          )}
+          ) : null}
         </div>
         {mapQuery && (
           <a
@@ -98,6 +97,7 @@ export default async function ContactPage() {
           </a>
         )}
       </section>
+      )}
     </div>
   );
 }
